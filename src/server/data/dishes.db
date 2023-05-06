@@ -1,0 +1,3 @@
+{"$$indexCreated":{"fieldName":"ID","unique":true,"sparse":false}}
+{"$$indexCreated":{"fieldName":"name","unique":true,"sparse":false}}
+{"cal":238.3,"sodium":56,"sugar":0,"size":100,"name":"pig","ID":0,"_id":"iBcuAxBdb5iEt7m9"}
