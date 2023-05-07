@@ -114,12 +114,57 @@ const database = {
             dishesDB.find({},{ _id: 0 }).sort({"ID":1}).exec((err, doc) => {
                 if (err) {
                     reject(err);
-                } else {
-                    resolve(doc);
+                    return
                 }
+                resolve(doc);
+
+            });
+        });
+    },
+
+    async deleteById(id) {
+        return new Promise((resolve, reject) => {
+            let deletedDoc
+            dishesDB.findOne({ ID:id }, (err, doc) => {
+                if (err) {
+                    reject(err);
+                    return
+                }
+                deletedDoc = doc
+                dishesDB.remove({ ID:id }, { multi: false ,_id:0}, (err, num) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(deletedDoc);
+                    }
+                });
+
+            });
+        });
+    },
+
+    async deleteByName(name) {
+        return new Promise((resolve, reject) => {
+            let deletedDoc
+            dishesDB.findOne({ name }, (err, doc) => {
+                if (err) {
+                    reject(err);
+                    return
+                }
+                deletedDoc = doc
+                dishesDB.remove({ name }, { multi: false ,_id:0}, (err, num) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(deletedDoc);
+                    }
+                });
+
             });
         });
     }
+
+
 
     // // Find a user by email
     // async findUserByEmail(email) {

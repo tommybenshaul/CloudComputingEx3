@@ -2,9 +2,17 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const app = express();
+function checkContentType(req, res, next) {
+    if (req.method === "POST" && req.headers["content-type"] !== "application/json") {
+        return res.status(415).send("0");
+    }
+    next();
+}
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(checkContentType);
+
 
 
 app.use((req, res, next) => {
@@ -14,7 +22,7 @@ app.use((req, res, next) => {
     // Request methods you wish to allow
     res.setHeader(
         'Access-Control-Allow-Methods',
-        'GET, POST, OPTIONS, PUT, PATCH, DELETE'
+        'GET, POST, OPTIONS, DELETE'
     );
 
     // Request headers you wish to allow
@@ -31,6 +39,9 @@ app.use((req, res, next) => {
     next();
 });
 
+
+
 require('./routes')(app);
+
 
 module.exports = app;

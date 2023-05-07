@@ -7,6 +7,6 @@ module.exports = (app) => {
     app.use('/dishes', dishes);
     // app.use('/users', validateAuth.checkIfAuthenticated, getData.getGeoip, users);
     app.use('*', (req, res) => {
-        res.send('Not found!!!');
+        res.status(404).send('Not found!!!');
     });
 };
