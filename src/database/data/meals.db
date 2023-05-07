@@ -1,0 +1,4 @@
+{"$$indexCreated":{"fieldName":"ID","unique":true,"sparse":false}}
+{"$$indexCreated":{"fieldName":"name","unique":true,"sparse":false}}
+{"name":"special","appetizer":4,"main":5,"dessert":6,"cal":339.5,"sodium":624,"sugar":16.1,"ID":1,"_id":"jYPcwmsh0MKOKwm5"}
+{"name":"specialOne","appetizer":4,"main":5,"dessert":6,"cal":339.5,"sodium":624,"sugar":16.1,"ID":2,"_id":"VGUcHS8Ak3XZ4L7a"}

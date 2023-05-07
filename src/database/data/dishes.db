@@ -1,0 +1,10 @@
+{"$$indexCreated":{"fieldName":"ID","unique":true,"sparse":false}}
+{"$$indexCreated":{"fieldName":"name","unique":true,"sparse":false}}
+{"cal":154.1,"sodium":4,"sugar":1.1,"size":100,"name":"Spaghetti","ID":1,"_id":"lnwxjY7CVO4V1Sfj"}
+{"cal":238.3,"sodium":56,"sugar":0,"size":100,"name":"pig","ID":2,"_id":"5GVgI5m2qZK3tZRv"}
+{"cal":346.9,"sodium":194,"sugar":1.6,"size":200,"name":"Spaghetti Carbonara","ID":3,"_id":"KavCclWExN0DE192"}
+{"$$deleted":true,"_id":"5GVgI5m2qZK3tZRv"}
+{"$$deleted":true,"_id":"lnwxjY7CVO4V1Sfj"}
+{"cal":23.6,"sodium":36,"sugar":2.2,"size":100,"name":"salad","ID":4,"_id":"jYfmPqewuO3333Zw"}
+{"cal":262.9,"sodium":587,"sugar":3.6,"size":100,"name":"pizza","ID":5,"_id":"o8lqIsqwpAlx1y2Y"}
+{"cal":53,"sodium":1,"sugar":10.3,"size":100,"name":"apple","ID":6,"_id":"XdX2R1F9IjQKdEe8"}

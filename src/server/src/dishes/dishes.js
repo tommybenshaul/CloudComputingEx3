@@ -1,6 +1,6 @@
 const express = require('express');
 const apiNinjaHandler = require("./../../../externalApi/apininja/apiNinjaHandler.js")
-const database = require('./../../../../database/neDBhandler');
+const database = require('../../../database/neDBhandler');
 const _ = require('lodash');
 const validateSchemas = require('../../middlewares/validateSchemas');
 const schemas = require('./schemasValidation');
@@ -42,12 +42,20 @@ router.post('',  validateSchemas.inputs(schemas.addDish, 'body'),async (req, res
 
 router.get('/:name([a-zA-Z]+)',async (req, res) => {
     let doc = await database.getDishByName(req.params.name)
+    if (doc == null){
+        res.status(404).send("-5")
+        return
+    }
     res.json(doc)
 })
 
 router.get('/:id([0-9]+)',async (req, res) => {
     const id = parseInt(req.params.id);
     let doc = await database.getDishById(id)
+    if (doc == null){
+        res.status(404).send("-5")
+        return
+    }
     res.json(doc)
 })
 

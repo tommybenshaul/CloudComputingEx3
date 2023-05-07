@@ -1,6 +1,6 @@
 const express = require('express');
 const apiNinjaHandler = require("./../../../externalApi/apininja/apiNinjaHandler.js")
-const database = require('./../../../../database/neDBhandler');
+const database = require('../../../database/neDBhandler');
 const _ = require('lodash');
 const validateSchemas = require('../../middlewares/validateSchemas');
 const schemas = require('./schemasValidation');
@@ -21,43 +21,64 @@ const router = express.Router();
 //     }
 // );
 
-router.post('',  validateSchemas.inputs(schemas.addDish, 'body'),async (req, res) => {
-
-    const { name} = req.body;
-    let ninjaRes = await apiNinjaHandler.getNinjaDishes2(name)
-    if (_.isNumber(ninjaRes)){
-        let statusCode = ninjaRes === -3 ? 422 : 504
-        res.status(statusCode).send(ninjaRes.toString())
-        return
-    }
-    ninjaRes.name = name
+router.post('',  validateSchemas.inputs(schemas.addMeal, 'body'),async (req, res) => {
     try {
-        let doc = await database.insertDish(ninjaRes)
+        let doc = await database.insertMeal(req.body)
+        const { name} = req.body;
         res.status(201).send(doc.ID.toString())
     }catch (err){
+        if (err == "-6"){
+            res.status(422).send("-6")
+            return
+        }
         res.status(422).send("-2")
     }
+
+
+})
+
+router.put('/:id([0-9]+)',  validateSchemas.inputs(schemas.addMeal, 'body'),async (req, res) => {
+    try {
+        let id = req.params.id
+        let doc = await database.putMeal(req.body)
+        res.status(200).send(doc.ID.toString())
+    }catch (err){
+        if (err == "-6"){
+            res.status(422).send("-6")
+            return
+        }
+        res.status(422).send("-2")
+    }
+
 
 })
 
 router.get('/:name([a-zA-Z]+)',async (req, res) => {
-    let doc = await database.getDishByName(req.params.name)
+    let doc = await database.getMealByName(req.params.name)
+    if (doc == null){
+        res.status(404).send("-5")
+        return
+    }
     res.json(doc)
 })
 
 router.get('/:id([0-9]+)',async (req, res) => {
     const id = parseInt(req.params.id);
-    let doc = await database.getDishById(id)
+    let doc = await database.getMealById(id)
+    if (doc == null){
+        res.status(404).send("-5")
+        return
+    }
     res.json(doc)
 })
 
 router.get('',async (req, res) => {
-    let doc = await database.getAllDishes(req.params.name)
+    let doc = await database.getAllMeals(req.params.name)
     const result = _.keyBy(doc, 'ID');
     res.json(result)
 })
 router.delete('/:name([a-zA-Z]+)',async (req, res) => {
-    let doc = await database.deleteByName(req.params.name)
+    let doc = await database.deleteMealByName(req.params.name)
     if (doc == undefined || _.isEmpty(doc)) {
         res.status(404).send("-5")
         return
@@ -67,7 +88,7 @@ router.delete('/:name([a-zA-Z]+)',async (req, res) => {
 
 router.delete('/:id([0-9]+)',async (req, res) => {
     const id = parseInt(req.params.id);
-    let doc = await database.deleteById(id)
+    let doc = await database.deleteMealById(id)
     if (doc == undefined || _.isEmpty(doc)) {
         res.status(404).send("-5")
         return
