@@ -1,4 +1,14 @@
 {"$$indexCreated":{"fieldName":"ID","unique":true,"sparse":false}}
 {"$$indexCreated":{"fieldName":"name","unique":true,"sparse":false}}
-{"name":"special","appetizer":4,"main":5,"dessert":6,"cal":339.5,"sodium":624,"sugar":16.1,"ID":1,"_id":"jYPcwmsh0MKOKwm5"}
-{"name":"specialOne","appetizer":4,"main":5,"dessert":6,"cal":339.5,"sodium":624,"sugar":16.1,"ID":2,"_id":"VGUcHS8Ak3XZ4L7a"}
+{"name":"special","appetizer":4,"main":5,"dessert":6,"cal":339.5,"sodium":624,"sugar":16.1,"ID":1,"_id":"MwBMQK8YlbX0Ka7L"}
+{"name":"specialOne","appetizer":4,"main":5,"dessert":6,"cal":339.5,"sodium":624,"sugar":16.1,"ID":2,"_id":"RaQgHwXngwkEPmeV"}
+{"name":"specialOnePut","appetizer":6,"main":4,"dessert":5,"ID":2,"cal":339.5,"sodium":624,"sugar":16.1,"_id":"RaQgHwXngwkEPmeV"}
+{"name":"specialOnePut aa","appetizer":6,"main":4,"dessert":5,"ID":2,"cal":339.5,"sodium":624,"sugar":16.1,"_id":"RaQgHwXngwkEPmeV"}
+{"name":" meal","appetizer":3,"main":4,"dessert":5,"cal":633.4,"sodium":817,"sugar":7.4,"ID":3,"_id":"dkJrWIjOTuLcauT3"}
+{"name":"a a","appetizer":3,"main":4,"dessert":5,"cal":633.4,"sodium":817,"sugar":7.4,"ID":4,"_id":"S1LGtJ5BTcjfs90S"}
+{"$$deleted":true,"_id":"S1LGtJ5BTcjfs90S"}
+{"$$deleted":true,"_id":"dkJrWIjOTuLcauT3"}
+{"name":"a a","appetizer":3,"main":7,"dessert":9,"cal":584.5999999999999,"sodium":198,"sugar":2.9,"ID":3,"_id":"0VlSgvVlBoGwaF0p"}
+{"name":"special","appetizer":null,"main":5,"dessert":6,"cal":null,"sodium":null,"sugar":null,"ID":1,"_id":"MwBMQK8YlbX0Ka7L"}
+{"name":"specialOnePut aa","appetizer":6,"main":null,"dessert":5,"ID":2,"cal":null,"sodium":null,"sugar":null,"_id":"RaQgHwXngwkEPmeV"}
+{"name":"a a","appetizer":null,"main":7,"dessert":9,"cal":null,"sodium":null,"sugar":null,"ID":3,"_id":"0VlSgvVlBoGwaF0p"}

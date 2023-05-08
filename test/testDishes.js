@@ -40,6 +40,42 @@ function putMeal(done,mealid,name,appetizer,main,dessert,expectId,expectedStatus
             done();
         });
 }
+
+
+function getMealAndCheck(done,getNameOrId,expectedStatus,expectId,exAppetizer,exMain,exDessert,exName,cal =null,sodium=null,sugar=null){
+        const url = "/meals/"+getNameOrId
+        request(app)
+            .get(url)
+            .expect(expectedStatus)
+            .end((err, res) => {
+                if (err) return done(err);
+                expect(res.body).to.be.an("object");
+                expect(res.body.ID).to.equal(expectId);
+                expect(res.body.appetizer).to.equal(exAppetizer);
+                expect(res.body.main).to.equal(exMain)
+                expect(res.body.dessert).to.equal(exDessert);
+                expect(res.body.name).to.equal(exName);
+                if (cal)
+                    expect(res.body.cal).to.equal(cal);
+                if (sodium)
+                    expect(res.body.sodium).to.equal(sodium);
+                if (sugar)
+                    expect(res.body.sugar).to.equal(sugar);
+
+
+                done();
+            });
+}
+function deleteMeal(done,idOrName,expectedCode,ecpectedReturn){
+    request(app)
+        .delete(`/meals/${idOrName}`)
+        .expect(expectedCode)
+        .end((err, res) => {
+            if (err) return done(err);
+            expect(res.text).to.equal(ecpectedReturn);
+            done();
+        });
+}
 describe("Dishes API", () => {
 
     function createDish(done,dishName,expectId,expectedStatus = 201) {
@@ -171,6 +207,19 @@ describe("Dishes API", () => {
             });
     });
 
+    it("should get a specific dish by name", (done) => {
+        request(app)
+            .get(`/dishes/Spaghetti Carbonara`)
+            .expect(200)
+            .end((err, res) => {
+                if (err) return done(err);
+                expect(res.body.ID).to.equal(3);
+                expect(res.body.name).to.equal("Spaghetti Carbonara");
+                done();
+            });
+    });
+
+
 
     it("delete non exsisting id", (done) => {
         deleteTest(done,"200","-5",404)
@@ -266,9 +315,18 @@ describe("Dishes API", () => {
     });
 
 
+    it("get a meal after put  with a diffrent name", (done) => {
+
+        getMealAndCheck(done,"2",200,2,6,4,5,"specialOnePut")
+    });
+
     it("put a meal with a diffrent name", (done) => {
+        putMeal(done,"2","specialOnePut aa",6,4,5,"2",200)
+    });
+
+    it("get a meal after put  with a diffrent name", (done) => {
         request(app)
-            .get("/meals/2")
+            .get('/meals/specialOnePut aa')
             .expect(200)
             .end((err, res) => {
                 if (err) return done(err);
@@ -277,11 +335,83 @@ describe("Dishes API", () => {
                 expect(res.body.appetizer).to.equal(6);
                 expect(res.body.main).to.equal(4)
                 expect(res.body.dessert).to.equal(5);
-                expect(res.body.name).to.equal("specialOnePutd");
+                expect(res.body.name).to.equal("specialOnePut aa");
 
                 done();
             });
     });
+
+    it("should add a 7 dish with spave ", (done) => {
+        createDish(done," tofu" ,"7");
+    });
+
+    it("should get a specific dish by ID", (done) => {
+        request(app)
+            .get(`/dishes/ tofu`)
+            .expect(200)
+            .end((err, res) => {
+                if (err) return done(err);
+                expect(res.body.ID).to.equal(7);
+                expect(res.body.name).to.equal(" tofu");
+                done();
+            });
+    });
+
+    it("should add a 8 dish with spave ", (done) => {
+        createDish(done," pasta" ,"8");
+    });
+
+    it("should add a 9 dish with spave ", (done) => {
+        createDish(done,"pasta " ,"9");
+    });
+
+    it("delete a dish with a leading space  ", (done) => {
+        deleteTest(done," pasta","8",200)
+    });
+
+    it("create a meal with a leading space  ", (done) => {
+        createMeal(done," meal",3,4,5,"3",201)
+    });
+
+    it("create a meal with a traling space  ", (done) => {
+        createMeal(done,"a a",3,4,5,"4",201)
+    });
+
+    it("delete a meal with a  space", (done) => {
+        deleteMeal(done,"a a",200,"4")
+    });
+
+    it("delete a meal with a leading space", (done) => {
+        deleteMeal(done," meal",200,"3")
+    });
+
+    it("create a meal with a spave ", (done) => {
+        createMeal(done,"a a",3,7,9,"3",201)
+    });
+
+    it("delete a dish in a meal by id", (done) => {
+        deleteTest(done,4,"4",200)
+    });
+
+    it("get a meal by id after delete dish  ", (done) => {
+        getMealAndCheck(done,"1",200,1,null,5,6,"special",null,null,null)
+    });
+
+    it("get a meal by name after delete dish" , (done) => {
+        getMealAndCheck(done,"specialOnePut aa",200,2,6,null,5,"specialOnePut aa")
+    });
+
+    it("delete a dish in a meal by name", (done) => {
+        deleteTest(done,"Spaghetti Carbonara","3",200)
+    });
+
+    it("get a meal by name after delete dish" , (done) => {
+        getMealAndCheck(done,"a a",200,3,null,7,9,"a a",null,null,null)
+    });
+
+
+
+
 
 
 

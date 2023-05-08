@@ -40,7 +40,9 @@ router.post('',  validateSchemas.inputs(schemas.addMeal, 'body'),async (req, res
 router.put('/:id([0-9]+)',  validateSchemas.inputs(schemas.addMeal, 'body'),async (req, res) => {
     try {
         let id = req.params.id
-        let doc = await database.putMeal(req.body)
+        let body = req.body
+        body.ID = parseInt(id)
+        let doc = await database.putMeal(body)
         res.status(200).send(doc.ID.toString())
     }catch (err){
         if (err == "-6"){
@@ -53,15 +55,6 @@ router.put('/:id([0-9]+)',  validateSchemas.inputs(schemas.addMeal, 'body'),asyn
 
 })
 
-router.get('/:name([a-zA-Z]+)',async (req, res) => {
-    let doc = await database.getMealByName(req.params.name)
-    if (doc == null){
-        res.status(404).send("-5")
-        return
-    }
-    res.json(doc)
-})
-
 router.get('/:id([0-9]+)',async (req, res) => {
     const id = parseInt(req.params.id);
     let doc = await database.getMealById(id)
@@ -72,18 +65,21 @@ router.get('/:id([0-9]+)',async (req, res) => {
     res.json(doc)
 })
 
+router.get('/:name',async (req, res) => {
+    let doc = await database.getMealByName(req.params.name)
+    if (doc == null){
+        res.status(404).send("-5")
+        return
+    }
+    res.json(doc)
+})
+
+
+
 router.get('',async (req, res) => {
     let doc = await database.getAllMeals(req.params.name)
     const result = _.keyBy(doc, 'ID');
     res.json(result)
-})
-router.delete('/:name([a-zA-Z]+)',async (req, res) => {
-    let doc = await database.deleteMealByName(req.params.name)
-    if (doc == undefined || _.isEmpty(doc)) {
-        res.status(404).send("-5")
-        return
-    }
-    res.json(doc.ID)
 })
 
 router.delete('/:id([0-9]+)',async (req, res) => {
@@ -95,6 +91,17 @@ router.delete('/:id([0-9]+)',async (req, res) => {
     }
     res.json(doc.ID)
 })
+
+router.delete('/:name',async (req, res) => {
+    let doc = await database.deleteMealByName(req.params.name)
+    if (doc == undefined || _.isEmpty(doc)) {
+        res.status(404).send("-5")
+        return
+    }
+    res.json(doc.ID)
+})
+
+
 
 router.delete('',async (req, res) => {
     res.status(405).send("-5")

@@ -40,15 +40,6 @@ router.post('',  validateSchemas.inputs(schemas.addDish, 'body'),async (req, res
 
 })
 
-router.get('/:name([a-zA-Z]+)',async (req, res) => {
-    let doc = await database.getDishByName(req.params.name)
-    if (doc == null){
-        res.status(404).send("-5")
-        return
-    }
-    res.json(doc)
-})
-
 router.get('/:id([0-9]+)',async (req, res) => {
     const id = parseInt(req.params.id);
     let doc = await database.getDishById(id)
@@ -59,19 +50,23 @@ router.get('/:id([0-9]+)',async (req, res) => {
     res.json(doc)
 })
 
+router.get('/:name',async (req, res) => {
+    let doc = await database.getDishByName(req.params.name)
+    if (doc == null){
+        res.status(404).send("-5")
+        return
+    }
+    res.json(doc)
+})
+
+
+
 router.get('',async (req, res) => {
     let doc = await database.getAllDishes(req.params.name)
     const result = _.keyBy(doc, 'ID');
     res.json(result)
 })
-router.delete('/:name([a-zA-Z]+)',async (req, res) => {
-    let doc = await database.deleteByName(req.params.name)
-    if (doc == undefined || _.isEmpty(doc)) {
-        res.status(404).send("-5")
-        return
-    }
-    res.json(doc.ID)
-})
+
 
 router.delete('/:id([0-9]+)',async (req, res) => {
     const id = parseInt(req.params.id);
@@ -82,6 +77,16 @@ router.delete('/:id([0-9]+)',async (req, res) => {
     }
     res.json(doc.ID)
 })
+router.delete('/:name',async (req, res) => {
+    let doc = await database.deleteByName(req.params.name)
+    if (doc == undefined || _.isEmpty(doc)) {
+        res.status(404).send("-5")
+        return
+    }
+    res.json(doc.ID)
+})
+
+
 
 router.delete('',async (req, res) => {
     res.status(405).send("-5")

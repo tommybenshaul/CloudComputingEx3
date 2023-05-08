@@ -3,6 +3,7 @@ const Joi = require('joi');
 const path = require('path');
 
 const fs = require('fs');
+const buffer = require("buffer");
 
 
 
@@ -123,7 +124,7 @@ const database = {
     },
 
     async deleteById(id) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             let deletedDoc
             dishesDB.findOne({ ID:id }, (err, doc) => {
                 if (err) {
@@ -131,12 +132,16 @@ const database = {
                     return
                 }
                 deletedDoc = doc
-                dishesDB.remove({ ID:id }, { multi: false ,_id:0}, (err, num) => {
+                dishesDB.remove({ ID:id }, { multi: false ,_id:0}, async (err, num) => {
                     if (err) {
                         reject(err);
-                    } else {
-                        resolve(deletedDoc);
+                        return
                     }
+                    if (num != 0)
+                        await this.updateMealsAfterDeletedDish(deletedDoc.ID)
+
+                    resolve(deletedDoc);
+
                 });
 
             });
@@ -144,7 +149,7 @@ const database = {
     },
 
     async deleteByName(name) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             let deletedDoc
             dishesDB.findOne({ name }, (err, doc) => {
                 if (err) {
@@ -152,12 +157,17 @@ const database = {
                     return
                 }
                 deletedDoc = doc
-                dishesDB.remove({ name }, { multi: false ,_id:0}, (err, num) => {
+                dishesDB.remove({ name }, { multi: false ,_id:0}, async (err, num) => {
                     if (err) {
                         reject(err);
-                    } else {
-                        resolve(deletedDoc);
+                        return
                     }
+                    if (num != 0)
+                        await this.updateMealsAfterDeletedDish(deletedDoc.ID)
+
+                    resolve(deletedDoc);
+
+
                 });
 
             });
@@ -311,50 +321,32 @@ const database = {
         });
     },
 
+    async updateMealsAfterDeletedDish(dishId) {
+        await this.updateMealsAfterDeletedDishSpecificField(dishId, 'appetizer');
+        await this.updateMealsAfterDeletedDishSpecificField(dishId, 'main');
+        await this.updateMealsAfterDeletedDishSpecificField(dishId, 'dessert');
+    },
 
-    // // Find a user by email
-    // async findUserByEmail(email) {
-    //     try {
-    //         const user = await usersDB.findOne({ email });
-    //         return user;
-    //     } catch (err) {
-    //         console.error(err);
-    //         throw err;
-    //     }
-    // },
-    //
-    // // Get all users
-    // async getAllUsers() {
-    //     try {
-    //         const users = await usersDB.find({});
-    //         return users;
-    //     } catch (err) {
-    //         console.error(err);
-    //         throw err;
-    //     }
-    // },
-    //
-    // // Update a user by ID
-    // async updateUserById(id, update) {
-    //     try {
-    //         const numUpdated = await usersDB.update({ _id: id }, { $set: update });
-    //         return numUpdated;
-    //     } catch (err) {
-    //         console.error(err);
-    //         throw err;
-    //     }
-    // },
-    //
-    // // Delete a user by ID
-    // async deleteUserById(id) {
-    //     try {
-    //         const numRemoved = await usersDB.remove({ _id: id });
-    //         return numRemoved;
-    //     } catch (err) {
-    //         console.error(err);
-    //         throw err;
-    //     }
-    // }
+    async updateMealsAfterDeletedDishSpecificField(dishId,filed){
+        return new Promise((resolve, reject) => {
+            mealsDB.update(
+                { [filed] : dishId },
+                { $set: { [filed]: null ,sodium: null, sugar: null, cal: null } },
+                { multi: true },
+                (err, num) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(num);
+                    }
+                }
+            );
+        });
+    }
+
+
+
+
 };
 
 module.exports = database;
