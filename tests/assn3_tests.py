@@ -27,14 +27,14 @@ def test_post_dishes():
         assert response.status_code == STATUS_CODES['CREATED'], f"Expected status code {STATUS_CODES['CREATED']}, got {response.status_code}"
 
         json_response = response.json()
-        dishes[dish_name] = json_response
-        ids.append(json_response['ID'])
+        dishes[dish_name] = response.text
+        ids.append(response.text)
 
     assert len(set(ids)) == len(ids), "Expected all IDs to be unique, but they were not"
 
 # test 2
 def test_get_dish_by_id():
-    orange_id = dishes['orange']['ID']
+    orange_id = dishes['orange']
 
     response = requests.get(f"{BASE_URL}/dishes/{orange_id}")
     response.raise_for_status()
@@ -71,16 +71,16 @@ def test_post_meals():
 
     meal = {
         "name": "delicious",
-        "appetizer": dishes["orange"]["ID"],
-        "main": dishes["spaghetti"]["ID"],
-        "dessert": dishes["apple pie"]["ID"]
+        "appetizer": int(dishes["orange"]),
+        "main": int(dishes["spaghetti"]),
+        "dessert": int(dishes["apple pie"])
     }
-
+    print(meal)
     response = requests.post(f"{BASE_URL}/meals", json=meal)
     response.raise_for_status()
 
     assert response.status_code == STATUS_CODES['CREATED'], f"Expected status code {STATUS_CODES['CREATED']}, got {response.status_code}"
-    assert response.json()['ID'] > 0, "Expected ID to be greater than 0"
+    assert int(response.text) > 0, "Expected ID to be greater than 0"
 
 # test 7
 def test_get_all_meals():
@@ -90,7 +90,7 @@ def test_get_all_meals():
     meals = response.json()
     assert len(meals) == 1, f"Expected 1 meal, got {len(meals)}"
 
-    calories = meals[0]['cal']
+    calories = meals['1']['cal']
     assert 400 <= calories <= 500, f"Expected calories to be between 400 and 500, got {calories}"
     assert response.status_code == STATUS_CODES['OK'], f"Expected status code {STATUS_CODES['OK']}, got {response.status_code}"
 
@@ -98,9 +98,9 @@ def test_get_all_meals():
 def test_post_duplicate_meal():
     meal = {
         "name": "delicious",
-        "appetizer": dishes["orange"]["ID"],
-        "main": dishes["spaghetti"]["ID"],
-        "dessert": dishes["apple pie"]["ID"]
+        "appetizer": int(dishes["orange"]),
+        "main": int(dishes["spaghetti"]),
+        "dessert": int(dishes["apple pie"])
     }
 
     response = requests.post(f"{BASE_URL}/meals", json=meal)
