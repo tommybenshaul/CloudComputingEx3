@@ -45,7 +45,7 @@ def test_get_dish_by_id():
 
 # test 3
 def test_get_all_dishes():
-    response = requests.get(f"{BASE_URL}/dishes}")
+    response = requests.get(f"{BASE_URL}/dishes")
     response.raise_for_status()
     assert response.status_code == STATUS_CODES['OK'], f"Expected status code {STATUS_CODES['OK']}, got {response.status_code}"
 
