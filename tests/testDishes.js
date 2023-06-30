@@ -265,7 +265,7 @@ describe("Dishes API", () => {
         createMeal(done,"specialOne",4,5,6,"2",201);
     });
 
-    it("test total number of meals ", (done) => {
+    it("tests total number of meals ", (done) => {
         testGetAllMeals(done,2)
     });
 
