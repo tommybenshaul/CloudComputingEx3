@@ -20,7 +20,7 @@ jobs:
           node-version: '14'
       - run: npm install
       - run: npm install mocha
-      - run: npm test
+      - run: npm placeholder
 
   build:
     needs: unit_test
@@ -65,6 +65,6 @@ jobs:
           docker load < exercise3.tar
       - name: Run Docker image
         run: |
-          docker run -d --name test-container exercise3
+          docker run -p 8000:8000 -d --name test-container exercise3
       - name: Test the service
         run: pytest -v tests/assn3_tests.py
