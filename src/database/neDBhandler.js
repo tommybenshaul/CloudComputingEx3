@@ -66,6 +66,11 @@ mealsDB.ensureIndex({ fieldName: 'name', unique: true }, err => {
 });
 
 const database = {
+
+    test() {
+        return true
+    },
+
     // Insert a new user
     async insertDish(dish) {
 
