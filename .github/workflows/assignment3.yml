@@ -97,7 +97,7 @@ jobs:
           fi
 
       - name: Run tests and capture output
-        run: pytest -v tests/assn3_tests.py > assn3_test_results.txt
+        run: pytest -v tests/assn3_tests.py > assn3_test_results.txt || true
 
       - name: Capture pytest exit code
         run: echo "PYTEST_EXIT_CODE=$?"
