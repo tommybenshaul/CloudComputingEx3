@@ -35,6 +35,11 @@ jobs:
       - name: Save Docker image
         run: |
           docker save exercise3 > exercise3.tar
+          
+      - name: delete old Docker image
+        uses: geekyeggo/delete-artifact@v2
+        with:
+          name: exercise3-image
 
       - name: Upload Docker image
         uses: actions/upload-artifact@v3
