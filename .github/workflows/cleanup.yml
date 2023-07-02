@@ -1,5 +1,5 @@
 name: 'nightly artifacts cleanup'
-on push
+on: push
 
 jobs:
   delete-artifacts:
