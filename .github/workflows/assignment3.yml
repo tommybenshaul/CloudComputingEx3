@@ -33,12 +33,6 @@ jobs:
           echo "Workflow start time: $(date --iso-8601=minutes)" > log.txt
           echo "Submitter: Tommy Ben-Shaul" >> log.txt
 
-      - name: Upload log file
-        uses: actions/upload-artifact@v3
-        with:
-          name: log
-          path: log.txt
-
       - name: Build the Docker image
         run: |
           if docker build -t exercise3 .; then
@@ -50,19 +44,16 @@ jobs:
       - name: Save Docker image
         run: |
           docker save exercise3 > exercise3.tar
-          
-      - name: delete old Docker image
-        uses: geekyeggo/delete-artifact@v2
+
+
+      - name: Upload Docker image
+        uses: actions/upload-artifact@v3
         with:
           name: exercise3-image
-
-#      - name: Upload Docker image
-#        uses: actions/upload-artifact@v3
-#        with:
-#          name: exercise3-image
-#          path: exercise3.tar
+          path: exercise3.tar
 
       - name: Upload log file
+        if: ${{ always() }}
         uses: actions/upload-artifact@v3
         with:
           name: log
@@ -116,7 +107,7 @@ jobs:
           name: test-results
           path: assn3_test_results.txt
 
-      - name: Generate log.txt
+      - name: Generate log for test result
         run: |
           if [ "$PYTEST_EXIT_CODE" -ne 0 ]; then
             echo "Tests failed" >> log.txt
@@ -124,8 +115,8 @@ jobs:
             echo "Tests succeeded" >> log.txt
           fi
 
-
       - name: Upload log file
+        if: ${{ always() }}
         uses: actions/upload-artifact@v3
         with:
           name: log
