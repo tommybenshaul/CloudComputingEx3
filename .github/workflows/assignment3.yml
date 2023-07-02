@@ -31,7 +31,7 @@ jobs:
       - name: Generate log.txt
         run: |
           echo "Workflow start time: $(date --iso-8601=minutes)" > log.txt
-          echo "Submitter: ${GITHUB_ACTOR}" >> log.txt
+          echo "Submitter: Tommy Ben-Shaul" >> log.txt
 
       - name: Upload log file
         uses: actions/upload-artifact@v3
@@ -56,11 +56,11 @@ jobs:
         with:
           name: exercise3-image
 
-      - name: Upload Docker image
-        uses: actions/upload-artifact@v3
-        with:
-          name: exercise3-image
-          path: exercise3.tar
+#      - name: Upload Docker image
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: exercise3-image
+#          path: exercise3.tar
 
       - name: Upload log file
         uses: actions/upload-artifact@v3
@@ -74,6 +74,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+
+      - name: Download log file
+        uses: actions/download-artifact@v3
+        with:
+          name: log
+
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
@@ -83,14 +89,11 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install pytest requests
+
       - name: Download Docker image
         uses: actions/download-artifact@v3
         with:
           name: exercise3-image
-
-      - name: Load Docker image
-        run: |
-          docker load < exercise3.tar
 
       - name: Run Docker image
         run: |
@@ -107,6 +110,12 @@ jobs:
           pytest -v tests/assn3_tests.py > assn3_test_results.txt
           echo "PYTEST_EXIT_CODE=$?" >> $GITHUB_ENV
 
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: assn3_test_results.txt
+
       - name: Generate log.txt
         run: |
           if [ "$PYTEST_EXIT_CODE" -ne 0 ]; then
@@ -114,6 +123,7 @@ jobs:
           else
             echo "Tests succeeded" >> log.txt
           fi
+
 
       - name: Upload log file
         uses: actions/upload-artifact@v3
