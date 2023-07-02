@@ -101,13 +101,11 @@ jobs:
             echo "Container failed to run" >> log.txt
           fi
 
-      - name: Test the service 1
-        run: pytest -v tests/assn3_tests.py
+      - name: Run tests and capture output
+        run: pytest -v tests/assn3_tests.py > assn3_test_results.txt
 
-      - name: Test the service 2
-        run: |
-          pytest -v tests/assn3_tests.py > assn3_test_results.txt
-          echo "PYTEST_EXIT_CODE=$?"
+      - name: Capture pytest exit code
+        run: echo "PYTEST_EXIT_CODE=$?"
 
       - name: Upload test results
         uses: actions/upload-artifact@v3
