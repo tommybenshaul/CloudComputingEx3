@@ -21,13 +21,27 @@ jobs:
       - run: npm install
       - run: npm install mocha
       - run: npm test
-
   build:
     needs: unit_test
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
+      - name: Delete existing artifacts
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const artifacts = await github.actions.listArtifacts({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+            for (const artifact of artifacts.data.artifacts) {
+              await github.actions.deleteArtifact({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                artifact_id: artifact.id
+              });
+            }
       - name: Build the Docker image
         run: |
           docker build -t exercise3 .
@@ -41,6 +55,7 @@ jobs:
         with:
           name: exercise3-image
           path: exercise3.tar
+
 
   test:
     needs: build
