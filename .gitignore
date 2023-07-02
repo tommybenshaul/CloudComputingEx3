@@ -2,3 +2,4 @@
 node_modules/
 src/database/data/dishes.db
 src/database/data/meals.db
+tests/__pycache__/
