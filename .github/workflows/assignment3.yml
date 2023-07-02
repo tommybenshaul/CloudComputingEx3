@@ -120,7 +120,7 @@ jobs:
         if: ${{ always() }}
         uses: actions/upload-artifact@v3
         with:
-          name: log
+          name: log.txt
           path: log.txt
 
   query:
@@ -159,5 +159,5 @@ jobs:
       - name: Upload response file
         uses: actions/upload-artifact@v3
         with:
-          name: response
-          path: response.txt
+          name: response.txt
+          path: .github/ci-resources/response.txt
