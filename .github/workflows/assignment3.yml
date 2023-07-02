@@ -86,11 +86,6 @@ jobs:
         with:
           name: exercise3-image
 
-      - name: delete old Docker image
-        uses: geekyeggo/delete-artifact@v2
-        with:
-          name: exercise3-image
-
       - name: Run Docker image
         run: |
           docker load < exercise3.tar
@@ -116,9 +111,9 @@ jobs:
       - name: Generate log for test result
         run: |
           if [ "$PYTEST_EXIT_CODE" -ne 0 ]; then
-            echo "tests succeeded" >> log.txt
-          else
             echo "tests failed" >> log.txt
+          else
+            echo "tests succeeded" >> log.txt
           fi
 
       - name: Upload log file
@@ -127,3 +122,42 @@ jobs:
         with:
           name: log
           path: log.txt
+
+  query:
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - run: npm install axios
+
+
+      - name: Download Docker image
+        uses: actions/download-artifact@v3
+        with:
+          name: exercise3-image
+
+      - name: Run Docker image
+        run: |
+          docker load < exercise3.tar
+          docker run -d -p 8000:8000 exercise3
+
+      - name: delete old Docker image
+        uses: geekyeggo/delete-artifact@v2
+        with:
+          name: exercise3-image
+
+      - name: Query service
+        run: node .github/ci-resources/query.js
+
+      - name: Upload response file
+        uses: actions/upload-artifact@v3
+        with:
+          name: response
+          path: response.txt
