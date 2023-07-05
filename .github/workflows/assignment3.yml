@@ -156,9 +156,10 @@ jobs:
       - name: Query service
         run: node .github/ci-resources/query.js
 
-      - name: List all files and directories
+      - name: List all files and directories excluding node_modules and .git
         run: |
-          ls -Rl
+          find . -path './node_modules' -prune -o -path './.git' -prune -o -print
+
 
       - name: Upload response file
         uses: actions/upload-artifact@v3
