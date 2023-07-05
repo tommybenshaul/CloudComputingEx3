@@ -97,10 +97,13 @@ jobs:
           fi
 
       - name: Run tests and capture output
-        run: pytest -v tests/assn3_tests.py > assn3_test_results.txt || true
+        id: tests
+        run: |
+          pytest -v tests/assn3_tests.py > assn3_test_results.txt || echo "tests_fail=true" >> $GITHUB_ENV
 
       - name: Capture pytest exit code
-        run: echo "PYTEST_EXIT_CODE=$?"
+        run: echo "PYTEST_EXIT_CODE=${{ steps.tests.outcome }}"
+
 
       - name: Upload test results
         uses: actions/upload-artifact@v3
@@ -110,11 +113,12 @@ jobs:
 
       - name: Generate log for test result
         run: |
-          if [ "$PYTEST_EXIT_CODE" -ne 0 ]; then
+          if [[ "${{ env.tests_fail }}" == "true" ]]; then
             echo "tests failed" >> log.txt
           else
             echo "tests succeeded" >> log.txt
           fi
+
 
       - name: Upload log file
         if: ${{ always() }}
