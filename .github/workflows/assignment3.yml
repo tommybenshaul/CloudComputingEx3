@@ -91,7 +91,7 @@ jobs:
           docker load < exercise3.tar
           if docker run -d -p 8000:8000 exercise3; then
             echo "Container up and running" >> log.txt
-            sleep 5
+            sleep 10
           else
             echo "Container failed to run" >> log.txt
           fi
@@ -151,6 +151,7 @@ jobs:
         run: |
           docker load < exercise3.tar
           docker run -d -p 8000:8000 exercise3
+          sleep 10
 
       - name: delete old Docker image
         uses: geekyeggo/delete-artifact@v2
