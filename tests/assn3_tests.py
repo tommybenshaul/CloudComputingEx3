@@ -107,3 +107,7 @@ def test_post_duplicate_meal():
 
     assert response.text == RETURN_VALUES['DUPLICATE_DISH'], f"Expected return value of {RETURN_VALUES['DUPLICATE_DISH']}, got {response.text}"
     assert response.status_code in [STATUS_CODES['BAD_REQUEST'], STATUS_CODES['UNPROCESSABLE_ENTITY']], f"Expected a status code of {STATUS_CODES['BAD_REQUEST']} or {STATUS_CODES['UNPROCESSABLE_ENTITY']}, got {response.status_code}"
+
+# test 9
+def test_that_will_faill():
+  assert 1==0
