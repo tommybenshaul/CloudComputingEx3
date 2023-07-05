@@ -18,7 +18,9 @@ async function writeToFile(message) {
 function makePostRequest(food) {
     return axios.post(`${BASE_URL}${ENDPOINT}`, { name: food })
         .catch(err => {
-            const errorMessage = `Failed to POST ${food} to ${err.config.url}. Status code: ${err.response.status}. Message: ${err.message}\n`;
+            const errorMessage = err.response
+                ? `Failed to POST ${food} to ${err.config.url}. Status code: ${err.response.status}. Message: ${err.message}\n`
+                : `Failed to POST ${food} due to network error: ${err.message}\n`;
             console.error(errorMessage);
             return writeToFile(errorMessage);
         });
@@ -27,12 +29,13 @@ function makePostRequest(food) {
 function makeGetRequest(food) {
     return axios.get(`${BASE_URL}${ENDPOINT}/${food}`)
         .catch(err => {
-            const errorMessage = `Failed to GET ${food} from ${err.config.url}. Status code: ${err.response.status}. Message: ${err.message}\n`;
+            const errorMessage = err.response
+                ? `Failed to GET ${food} from ${err.config.url}. Status code: ${err.response.status}. Message: ${err.message}\n`
+                : `Failed to GET ${food} due to network error: ${err.message}\n`;
             console.error(errorMessage);
             return writeToFile(errorMessage);
         });
 }
-
 async function queryService() {
     const queries = await readQueriesFromFile();
     await fs.promises.writeFile(RESPONSE_FILE, '');  // Always create the response.txt file
