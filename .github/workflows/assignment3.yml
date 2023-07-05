@@ -56,7 +56,7 @@ jobs:
         if: ${{ always() }}
         uses: actions/upload-artifact@v3
         with:
-          name: log
+          name: log.txt
           path: log.txt
 
   test:
@@ -69,7 +69,7 @@ jobs:
       - name: Download log file
         uses: actions/download-artifact@v3
         with:
-          name: log
+          name: log.txt
 
       - name: Set up Python
         uses: actions/setup-python@v3
@@ -105,7 +105,7 @@ jobs:
       - name: Upload test results
         uses: actions/upload-artifact@v3
         with:
-          name: test-results
+          name: assn3_test_results.txt
           path: assn3_test_results.txt
 
       - name: Generate log for test result
