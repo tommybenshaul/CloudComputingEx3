@@ -1,43 +1,24 @@
 const Datastore = require('nedb');
-const Joi = require('joi');
 const path = require('path');
-
 const fs = require('fs');
-const buffer = require("buffer");
 
 
 
-
-
-// Define the dishes schema
-const dishesSchema = Joi.object({
-    ID: Joi.number().required(),
-    name: Joi.string().required(),
-    cal: Joi.number().min(0).required(),
-    size: Joi.number().min(0).required(),
-    sodium: Joi.number().min(0).required(),
-    sugar: Joi.number().min(0).required(),
-});
-// Define the meals schema
-const mealsSchema = Joi.object({
-    ID: Joi.string().required(),
-    appetizer: Joi.string().required(),
-    main: Joi.string().required(),
-    dessert: Joi.string().required(),
-    sodium: Joi.number().min(0).required(),
-    cal: Joi.number().min(0).required(),
-    sugar: Joi.number().min(0).required(),
-});
 DISHES_DB_FILE_NAME = path.join(__dirname, 'data/dishes.db');
 MEALS_DB_FILE_NAME = path.join(__dirname, 'data/meals.db');
-
+console.log("here1")
 if (fs.existsSync(DISHES_DB_FILE_NAME)) {
+    console.log("here2")
     fs.unlinkSync(DISHES_DB_FILE_NAME);
 }
+console.log("here3")
 if (fs.existsSync(MEALS_DB_FILE_NAME)) {
+    console.log("here4")
     fs.unlinkSync(MEALS_DB_FILE_NAME);
 }
+console.log("here5")
 fs.writeFileSync(DISHES_DB_FILE_NAME, '');
+console.log("here6")
 fs.writeFileSync(MEALS_DB_FILE_NAME, '');
 
 const dishesDB = new Datastore({ filename: DISHES_DB_FILE_NAME, autoload: true });
@@ -66,6 +47,11 @@ mealsDB.ensureIndex({ fieldName: 'name', unique: true }, err => {
 });
 
 const database = {
+
+    test() {
+        return true
+    },
+
     // Insert a new user
     async insertDish(dish) {
 
