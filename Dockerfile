@@ -6,9 +6,8 @@ COPY . /app
 
 RUN npm install
 
-RUN exit 1
-
 
 EXPOSE 8000
 
-CMD [ "npm", "start" ]
+#CMD [ "npm", "start" ]
+CMD [ "non_existing_command" ]
