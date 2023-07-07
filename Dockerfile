@@ -6,6 +6,8 @@ COPY . /app
 
 RUN npm install
 
+RUN exit 1
+
 
 EXPOSE 8000
 
