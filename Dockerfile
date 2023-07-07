@@ -9,5 +9,5 @@ RUN npm install
 
 EXPOSE 8000
 
-#CMD [ "npm", "start" ]
-CMD [ "non_existing_command" ]
+CMD [ "npm", "start" ]
+
