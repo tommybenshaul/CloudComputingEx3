@@ -86,14 +86,27 @@ jobs:
         with:
           name: exercise3-image
 
+#      - name: Run Docker image
+#        run: |
+#          docker load < exercise3.tar
+#          if docker run -d -p 8000:8000 exercise3; then
+#            echo "Container up and running" >> log.txt
+#            sleep 10
+#          else
+#            echo "Container failed to run" >> log.txt
+#          fi
+
       - name: Run Docker image
+        continue-on-error: false
         run: |
           docker load < exercise3.tar
-          if docker run -d -p 8000:8000 exercise3; then
+          docker run -p 8000:8000 exercise3 &
+          sleep 15
+          if docker ps | grep -q 'exercise3'; then 
             echo "Container up and running" >> log.txt
-            sleep 10
-          else
-            echo "Container failed to run" >> log.txt
+          else 
+            echo "Container failed to run" >> log.txt 
+            exit 1
           fi
 
       - name: Run tests and capture output
