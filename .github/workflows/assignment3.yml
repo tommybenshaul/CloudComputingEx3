@@ -100,8 +100,8 @@ jobs:
         continue-on-error: false
         run: |
           docker load < exercise3.tar
-          docker run -d -p 8000:8000 exercise3
-          sleep 5
+          docker run -p 8000:8000 exercise3 &
+          sleep 15
           if docker ps | grep -q 'exercise3'; then 
             echo "Container up and running" >> log.txt
           else 
