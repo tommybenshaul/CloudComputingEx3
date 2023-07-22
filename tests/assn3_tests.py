@@ -1,109 +1,147 @@
 import requests
-import pytest
+import json
 
-# Constants
-BASE_URL = "http://localhost:8000"
-STATUS_CODES = {
-    'OK': 200,
-    'CREATED': 201,
-    'BAD_REQUEST': 400,
-    'NOT_FOUND': 404,
-    'UNPROCESSABLE_ENTITY': 422
-}
-RETURN_VALUES = {
-    'INVALID_DISH': '-3',
-    'DUPLICATE_DISH': '-2',
-}
 
-dishes = {}
+class ConnectionController:
 
-# test 1
-def test_post_dishes():
-    ids = []
-    dish_names = ["orange", "spaghetti", "apple pie"]
-    for dish_name in dish_names:
-        response = requests.post(f"{BASE_URL}/dishes", json={'name': dish_name})
-        response.raise_for_status()  # Raises an exception for 4xx and 5xx status codes
-        assert response.status_code == STATUS_CODES['CREATED'], f"Expected status code {STATUS_CODES['CREATED']}, got {response.status_code}"
+    URL = "http://127.0.0.1:8000"
 
-        json_response = response.json()
-        dishes[dish_name] = response.text
-        ids.append(response.text)
+    @staticmethod
+    def http_get(resource: str):
+        response = requests.get(url=f"{ConnectionController.URL}/{resource}", headers={"Content-Type": "application/json"})
+        return response
 
-    assert len(set(ids)) == len(ids), "Expected all IDs to be unique, but they were not"
+    @staticmethod
+    def http_delete(resource: str):
+        response = requests.delete(url=f"{ConnectionController.URL}/{resource}", headers={"Content-Type": "application/json"})
+        return response
 
-# test 2
-def test_get_dish_by_id():
-    orange_id = dishes['orange']
+    @staticmethod
+    def http_post(resource: str, data: {}):
+        response = requests.post(url=f"{ConnectionController.URL}/{resource}", headers={"Content-Type": "application/json"},
+                                 data=json.dumps(data))
+        return response
 
-    response = requests.get(f"{BASE_URL}/dishes/{orange_id}")
-    response.raise_for_status()
-    assert response.status_code == STATUS_CODES['OK'], f"Expected status code {STATUS_CODES['OK']}, got {response.status_code}"
+    @staticmethod
+    def http_put(resource: str, data: {}):
+        response = requests.put(url=f"{ConnectionController.URL}/{resource}", headers={"Content-Type": "application/json"},
+                                data=json.dumps(data))
+        return response
 
-    sodium_level = response.json()['sodium']
-    assert .9 <= sodium_level <= 1.1, f"Expected sodium level to be between .9 and 1.1, got {sodium_level}"
+    @staticmethod
+    def post_raw(resource: str, data: {}, headers: {}):
+        response = requests.post(url=f"{ConnectionController.URL}/{resource}", headers=headers, data=json.dumps(data))
+        return response
 
-# test 3
-def test_get_all_dishes():
-    response = requests.get(f"{BASE_URL}/dishes")
-    response.raise_for_status()
-    assert response.status_code == STATUS_CODES['OK'], f"Expected status code {STATUS_CODES['OK']}, got {response.status_code}"
+    @staticmethod
+    def add_dish(name: str) -> int:
+        dish = {"name": name}
+        response = ConnectionController.http_post("dishes", dish)
+        Assertion.assert_valid_added_resource(response)
+        return response.json()
 
-    dishes_count = len(response.json())
-    assert dishes_count == 3, f"Expected 3 dishes, got {dishes_count}"
+    @staticmethod
+    def add_meal(name: str, appetizer_id: int, main_id: int, dessert_id: int) -> int:
+        meal = {
+            "name": name,
+            "appetizer": appetizer_id,
+            "main": main_id,
+            "dessert": dessert_id
+        }
+        response = ConnectionController.http_post("meals", meal)
+        Assertion.assert_valid_added_resource(response)
+        assert response.json() > 0
+        return response.json()
 
-# test 4
-def test_post_invalid_dish():
-    response = requests.post(f"{BASE_URL}/dishes", json={'name': 'blah'})
 
-    assert response.status_code in [STATUS_CODES['BAD_REQUEST'], STATUS_CODES['NOT_FOUND'], STATUS_CODES['UNPROCESSABLE_ENTITY']], f"Expected a status code of {STATUS_CODES['BAD_REQUEST']}, {STATUS_CODES['NOT_FOUND']}, or {STATUS_CODES['UNPROCESSABLE_ENTITY']}, got {response.status_code}"
-    assert response.text == RETURN_VALUES['INVALID_DISH'], f"Expected return value of {RETURN_VALUES['INVALID_DISH']}, got {response.text}"
+class Assertion:
 
-# test 5
-def test_post_duplicate_dish():
-    response = requests.post(f"{BASE_URL}/dishes", json={'name': 'orange'})
+    @staticmethod
+    def assert_ret_value(response: requests.Response, returned_value: any):
+        assert response.json() == returned_value
 
-    assert response.status_code in [STATUS_CODES['BAD_REQUEST'], STATUS_CODES['NOT_FOUND'], STATUS_CODES['UNPROCESSABLE_ENTITY']], f"Expected a status code of {STATUS_CODES['BAD_REQUEST']}, {STATUS_CODES['NOT_FOUND']}, or {STATUS_CODES['UNPROCESSABLE_ENTITY']}, got {response.status_code}"
-    assert response.text == RETURN_VALUES['DUPLICATE_DISH'], f"Expected return value of {RETURN_VALUES['DUPLICATE_DISH']}, got {response.text}"
+    @staticmethod
+    def assert_err_code(response: requests.Response, error_code: int):
+        assert response.status_code == error_code
 
-# test 6
-def test_post_meals():
+    @staticmethod
+    def assert_valid_added_resource(response: requests.Response):
+        assert response.status_code == 201
 
-    meal = {
-        "name": "delicious",
-        "appetizer": int(dishes["orange"]),
-        "main": int(dishes["spaghetti"]),
-        "dessert": int(dishes["apple pie"])
-    }
-    print(meal)
-    response = requests.post(f"{BASE_URL}/meals", json=meal)
-    response.raise_for_status()
 
-    assert response.status_code == STATUS_CODES['CREATED'], f"Expected status code {STATUS_CODES['CREATED']}, got {response.status_code}"
-    assert int(response.text) > 0, "Expected ID to be greater than 0"
+orange_dish_id: int = None
+spaghetti_dish_id: int = None
+apple_pie_dish_id: int = None
 
-# test 7
-def test_get_all_meals():
-    response = requests.get(f"{BASE_URL}/meals")
-    response.raise_for_status()
 
+def test_1():
+    global orange_dish_id, apple_pie_dish_id, spaghetti_dish_id
+    orange_dish_id = ConnectionController.add_dish("orange")
+    spaghetti_dish_id = ConnectionController.add_dish("spaghetti")
+    apple_pie_dish_id = ConnectionController.add_dish("apple pie")
+    assert orange_dish_id != spaghetti_dish_id
+    assert orange_dish_id != apple_pie_dish_id
+    assert spaghetti_dish_id != apple_pie_dish_id
+
+
+def test_2():
+    global orange_dish_id
+    assert orange_dish_id is not None
+
+    response = ConnectionController.http_get(f"dishes/{orange_dish_id}")
+    Assertion.assert_err_code(response, error_code=200)
+
+    orange_sodium = response.json()["sodium"]
+    assert 0.9 <= orange_sodium <= 1.1
+
+
+def test_3():
+    response = ConnectionController.http_get("dishes")
+    Assertion.assert_err_code(response, error_code=200)
+
+    dishes = response.json()
+    assert len(dishes) == 3
+
+
+def test_4():
+    INVALID_DISH = {"name": "blah"}
+    response = ConnectionController.http_post("dishes", INVALID_DISH)
+    Assertion.assert_ret_value(response, -3)
+    assert response.status_code == 404 or response.status_code == 400 or response.status_code == 422
+
+
+def test_5():
+    DISH_NAME = "orange"
+    response = ConnectionController.http_post("dishes", {"name": DISH_NAME})
+    Assertion.assert_ret_value(response, -2)
+    assert response.status_code == 404 or response.status_code == 400 or response.status_code == 422
+
+
+def test_6():
+    global orange_dish_id, apple_pie_dish_id, spaghetti_dish_id
+    assert orange_dish_id is not None
+    assert apple_pie_dish_id is not None
+    assert spaghetti_dish_id is not None
+
+    ConnectionController.add_meal("delicious", orange_dish_id, spaghetti_dish_id, apple_pie_dish_id)
+
+
+def test_7():
+    response = ConnectionController.http_get("meals")
+    Assertion.assert_err_code(response, error_code=200)
     meals = response.json()
-    assert len(meals) == 1, f"Expected 1 meal, got {len(meals)}"
+    assert len(meals) == 1
 
-    calories = meals['1']['cal']
-    assert 400 <= calories <= 500, f"Expected calories to be between 400 and 500, got {calories}"
-    assert response.status_code == STATUS_CODES['OK'], f"Expected status code {STATUS_CODES['OK']}, got {response.status_code}"
+    for key in meals:
+        assert 400 <= meals[key]["cal"] <= 500
 
-# test 8
-def test_post_duplicate_meal():
-    meal = {
-        "name": "delicious",
-        "appetizer": int(dishes["orange"]),
-        "main": int(dishes["spaghetti"]),
-        "dessert": int(dishes["apple pie"])
-    }
 
-    response = requests.post(f"{BASE_URL}/meals", json=meal)
-
-    assert response.text == RETURN_VALUES['DUPLICATE_DISH'], f"Expected return value of {RETURN_VALUES['DUPLICATE_DISH']}, got {response.text}"
-    assert response.status_code in [STATUS_CODES['BAD_REQUEST'], STATUS_CODES['UNPROCESSABLE_ENTITY']], f"Expected a status code of {STATUS_CODES['BAD_REQUEST']} or {STATUS_CODES['UNPROCESSABLE_ENTITY']}, got {response.status_code}"
+def test_8():
+    global orange_dish_id, apple_pie_dish_id, spaghetti_dish_id
+    assert orange_dish_id is not None
+    assert apple_pie_dish_id is not None
+    assert spaghetti_dish_id is not None
+    meal = {"name": "delicious", "appetizer": orange_dish_id, "main": spaghetti_dish_id, "dessert": apple_pie_dish_id}
+    response = ConnectionController.http_post("meals", meal)
+    Assertion.assert_ret_value(response, returned_value=-2)
+    assert response.status_code == 400 or response.status_code == 422
