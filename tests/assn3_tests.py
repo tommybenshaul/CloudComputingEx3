@@ -76,6 +76,8 @@ orange_dish_id: int = None
 spaghetti_dish_id: int = None
 apple_pie_dish_id: int = None
 
+def test_example():
+    assert 1 == 2, "This test will fail because 1 is not equal to 2"
 
 def test_1():
     global orange_dish_id, apple_pie_dish_id, spaghetti_dish_id
